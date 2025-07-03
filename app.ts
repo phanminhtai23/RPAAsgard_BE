@@ -6,7 +6,7 @@ import StagehandConfig from "./stagehand.config.js";
 
 const app = express();
 const server = http.createServer(app);
-const wss = new WebSocketServer({ server, path: "/v1/sessions/logs" });
+const wss = new WebSocketServer({ server, path: "/" });
 
 let wsClients: Set<any> = new Set();
 
@@ -21,43 +21,68 @@ wss.on("connection", (ws) => {
 
 app.use(express.json());
 
-app.post("/api/run-stagehand", async (req, res) => {
+app.post("/run-stagehand", async (req: any, res: any) => {
     try {
-        const workflow: any[] = req.body;
+        // Nhận body theo format mới
+        const { cdpUrl, workflow } = req.body as {
+            cdpUrl: string;
+            workflow: any[];
+        };
 
+        if (!cdpUrl || !workflow) {
+            return res.status(400).json({ success: false, error: "Missing cdpUrl or workflow" });
+        }
+
+        // Khởi tạo Stagehand với cdpUrl từ body
         const stagehand = new Stagehand({
             ...StagehandConfig,
+            env: "LOCAL",
+            localBrowserLaunchOptions: {
+                cdpUrl: cdpUrl, // Sử dụng cdpUrl từ request body
+                viewport: {
+                    width: 1024,
+                    height: 768,
+                },
+            },
             logger: (logLine: LogLine) => {
                 // Gửi logLine cho tất cả client WebSocket đang kết nối
-                for (const client of wsClients) {
+                wss.clients.forEach((client) => {
                     if (client.readyState === 1) {
-                        // 1 = OPEN
                         client.send(JSON.stringify(logLine));
                     }
-                }
-                // Log ra console như cũ
-                console.log("category", logLine.category);
-                console.log("message", logLine.message);
+                });
+                // // Log ra console như cũ
+                // console.log("category", logLine.category);
+                // console.log("message", logLine.message);
             },
         });
-        await stagehand.init();
 
+        await stagehand.init();
         const page = stagehand.page;
 
+        // Xử lý workflow
         for (let i = 0; i < workflow.length; i++) {
             const jsonData = workflow[i];
+
             if (jsonData["method"] === "navigate") {
                 await page.goto(jsonData["arguments"][0]);
+            } else if (jsonData["action"]) {
+                // Xử lý action mới (như "click on the search box")
+                await page.act(jsonData["action"]);
             } else {
+                // Xử lý các loại action khác
                 await page.act(jsonData);
             }
         }
 
         await stagehand.close();
-        res.json({ success: true, message: "Stagehand ran successfully!" });
+        return res.json({
+            success: true,
+            message: "Stagehand ran successfully!",
+        });
     } catch (err) {
         const error = err as Error;
-        res.status(500).json({ success: false, error: error.message });
+        return res.status(500).json({ success: false, error: error.message });
     }
 });
 

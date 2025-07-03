@@ -4,7 +4,8 @@
   "scripts": {
     "build": "tsc",
     "start": "tsx index.ts",
-    "postinstall": "playwright install"
+    "postinstall": "playwright install",
+    "dev": "npx tsc && node dist/app.js"
   },
   "dependencies": {
     "@ai-sdk/openai": "^1.3.22",
