@@ -3,6 +3,7 @@ import http from "http";
 import { WebSocketServer } from "ws";
 import { Stagehand, LogLine } from "@browserbasehq/stagehand";
 import StagehandConfig from "./stagehand.config.js";
+import cors from "cors";
 
 const app = express();
 const server = http.createServer(app);
@@ -18,6 +19,10 @@ wss.on("connection", (ws) => {
         wsClients.delete(ws);
     });
 });
+
+app.use(cors({
+    origin: "http://localhost:3001"
+}));
 
 app.use(express.json());
 
@@ -46,10 +51,35 @@ app.post("/api/run-stagehand", async (req, res) => {
 
         for (let i = 0; i < workflow.length; i++) {
             const jsonData = workflow[i];
-            if (jsonData["method"] === "navigate") {
-                await page.goto(jsonData["arguments"][0]);
-            } else {
-                await page.act(jsonData);
+            let stepStatus = "success";
+            let stepError = null;
+
+            try {
+                if (jsonData["method"] === "navigate") {
+                    await page.goto(jsonData["arguments"][0]);
+                } else {
+                    await page.act(jsonData);
+                }
+            } catch (err) {
+                stepStatus = "error";
+                stepError = (err as Error).message;
+            }
+
+            // Gửi tín hiệu về client qua WebSocket
+            const stepResult = {
+                type: "stepResult",
+                data: {
+                    step: i,
+                    method: jsonData["method"],
+                    status: stepStatus,
+                    error: stepError,
+                    timestamp: new Date().toISOString(),
+                }
+            };
+            for (const client of wsClients) {
+                if (client.readyState === 1) {
+                    client.send(JSON.stringify(stepResult));
+                }
             }
         }
 
@@ -60,6 +90,7 @@ app.post("/api/run-stagehand", async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 });
+
 
 server.listen(4000, () => {
     console.log("Backend API + WebSocket running on http://localhost:4000");

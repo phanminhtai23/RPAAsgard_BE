@@ -2,8 +2,15 @@
   "name": "my-app",
   "type": "module",
   "scripts": {
-    "build": "tsc",
-    "start": "tsx index.ts",
+    "start": "node ./build/index.js",
+    "build": "tsc && npm run copy:templates && npm run copy:fingerprint",
+    "copy:templates": "mkdir build\\templates 2>nul & xcopy src\\templates\\* build\\templates\\ /E /I /Y",
+    "copy:fingerprint": "mkdir build\\scripts 2>nul & copy src\\scripts\\fingerprint.js build\\scripts\\fingerprint.js /Y",
+    "prepare:recorder": "cd extensions/recorder && npm install && npm run build",
+    "dev": "npm run prepare:recorder && tsx watch src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "pretty": "prettier --write \"src/**/*.ts\"",
+    "generate:openapi": "ts-node ./openapi/generate.ts",
     "postinstall": "playwright install"
   },
   "dependencies": {
@@ -14,6 +21,7 @@
     "ai": "^4.3.16",
     "boxen": "^8.0.1",
     "chalk": "^5.3.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "openai": "^5.8.2",
