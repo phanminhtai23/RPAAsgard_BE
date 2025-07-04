@@ -1,43 +1,26 @@
 {
-  "name": "my-app",
+  "name": "stagehand-lambda",
+  "version": "1.0.0",
   "type": "module",
+  "description": "Stagehand automation Lambda handler",
+  "main": "lambda-handler.js",
   "scripts": {
-    "build": "tsc",
-    "start": "node app.js",
-    "copy:templates": "mkdir build\\templates 2>nul & xcopy src\\templates\\* build\\templates\\ /E /I /Y",
-    "copy:fingerprint": "mkdir build\\scripts 2>nul & copy src\\scripts\\fingerprint.js build\\scripts\\fingerprint.js /Y",
-    "prepare:recorder": "cd extensions/recorder && npm install && npm run build",
-    "dev": "nodemon app.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "pretty": "prettier --write \"src/**/*.ts\"",
-    "generate:openapi": "ts-node ./openapi/generate.ts",
-    "postinstall": "playwright install"
+    "start": "node lambda-handler.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "@ai-sdk/openai": "^1.3.22",
-    "@browserbasehq/sdk": "^2.6.0",
     "@browserbasehq/stagehand": "^2.4.0",
-    "@playwright/test": "^1.49.1",
-    "ai": "^4.3.16",
-    "boxen": "^8.0.1",
-    "chalk": "^5.3.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.7",
-    "express": "^5.1.0",
-    "openai": "^5.8.2",
-    "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1",
-    "ws": "^8.18.3",
-    "zod": "^3.22.4"
+    "dotenv": "^16.4.7"
   },
-  "devDependencies": {
-    "@types/express": "^5.0.3",
-    "@types/node": "^24.0.10",
-    "@types/socket.io": "^3.0.2",
-    "@types/ws": "^8.18.1",
-    "ts-node": "^10.9.2",
-    "tsx": "^4.19.2",
-    "typescript": "^5.0.0"
+  "engines": {
+    "node": ">=18.0.0"
   },
-  "packageManager": "pnpm@9.15.0+sha512.76e2379760a4328ec4415815bcd6628dee727af3779aaa4c914e3944156c4299921a89f976381ee107d41f12cfa4b66681ca9c718f0668fa0831ed4c6d8ba56c"
+  "keywords": [
+    "stagehand",
+    "automation",
+    "lambda",
+    "playwright"
+  ],
+  "author": "",
+  "license": "MIT"
 }

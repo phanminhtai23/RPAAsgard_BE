@@ -7,3 +7,5 @@ dist
 cache.json
 inference_summary/
 log.json
+
+lamda-fuc
