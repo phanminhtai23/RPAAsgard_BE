@@ -4,27 +4,31 @@ import { WebSocketServer } from "ws";
 import { Stagehand } from "@browserbasehq/stagehand";
 import StagehandConfig from "./stagehand.config.js";
 import cors from "cors";
-
+import { Models } from "openai/resources/models.js";
+import serverless from "serverless-http";
 
 const HOST = process.env.HOST ?? "localhost";
-const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
+// const PORT = process.env.PORT ? parseInt(process.env.PORT, 10) : 4000;
 
 const app = express();
 const server = http.createServer(app);
 const wss = new WebSocketServer({ server, path: "/" });
 let wsClients = new Set();
-wss.on("connection", (ws) => {
-    wsClients.add(ws);
-    console.log("WebSocket client connected!");
-    ws.on("close", () => {
-        wsClients.delete(ws);
-    });
-});
-app.use(
-    cors({
-        origin: "http://localhost:4000",
-    })
-);
+
+// wss.on("connection", (ws) => {
+//     wsClients.add(ws);
+//     console.log("WebSocket client connected!");
+//     ws.on("close", () => {
+//         wsClients.delete(ws);
+//     });
+// });
+
+// app.use(
+//     cors({
+//         origin: "http://localhost:3001",
+//     })
+// );
+
 app.use(express.json());
 app.post("/run-stagehand", async (req, res) => {
     try {
@@ -102,6 +106,9 @@ app.post("/run-stagehand", async (req, res) => {
         return res.status(500).json({ success: false, error: error.message });
     }
 });
-server.listen(PORT,HOST, () => {
-    console.log(`Backend API + WebSocket running on http://${HOST}:${PORT}`);
-});
+
+// server.listen(PORT,HOST, () => {
+//     console.log(`Backend API + WebSocket running on http://${HOST}:${PORT}`);
+// });
+
+export const handler = serverless(app);

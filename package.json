@@ -25,6 +25,7 @@
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "openai": "^5.8.2",
+    "serverless-http": "^3.2.0",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "ws": "^8.18.3",
