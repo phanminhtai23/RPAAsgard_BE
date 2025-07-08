@@ -1,5 +1,4 @@
-
   {"description": "navigate", "method": "navigate", "arguments": ["https://youtube.com/"], "selector": ""}
   {"description": "the search box", "method": "click", "arguments": [], "selector": "xpath=/html[1]/body[1]/ytd-app[1]/div[1]/div[2]/ytd-masthead[1]/div[4]/div[2]/yt-searchbox[1]/div[1]/form[1]/input[1]"}
   {"description": "combobox: Search", "method": "fill", "arguments": ["how to make a website"], "selector": "xpath=/html[1]/body[1]/ytd-app[1]/div[1]/div[2]/ytd-masthead[1]/div[4]/div[2]/yt-searchbox[1]/div[1]/form[1]/input[1]"}
-  {"description": "combobox: Search", "method": "press", "arguments": ["Enter"], "selector": "xpath=/html[1]/body[1]/ytd-app[1]/div[1]/div[2]/ytd-masthead[1]/div[4]/div[2]/yt-searchbox[1]/div[1]/form[1]/input[1]"}
+  {"description": "combobox: Search", "method": "press", "arguments": ["Enter"], "selector": "xpath=/html[1]/body[1]/ytd-app[1]/div[1]/div[2]/ytd-masthead[1]/div[4]/div[2]/yt-searchbox[1]/div[1]/form[1]/input[1]"}                              lk 

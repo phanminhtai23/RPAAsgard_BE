@@ -39,10 +39,20 @@ export class StagehandService {
                 let stepError = null;
 
                 try {
+                    // if (jsonData["method"] === "navigate") {
+                    //     await page.goto(jsonData["arguments"][0]);
+                    // } else {
+                    //     await page.act(jsonData);
+                    // }
+
                     if (jsonData["method"] === "navigate") {
+                        const jsonDataString = "navigate to" + JSON.stringify(jsonData);
+                        console.log(jsonDataString);
                         await page.goto(jsonData["arguments"][0]);
                     } else {
-                        await page.act(jsonData);
+                        const jsonDataString = JSON.stringify(jsonData);
+                        console.log(jsonDataString);
+                        await page.act(jsonDataString);
                     }
                 } catch (err) {
                     stepStatus = "error";
